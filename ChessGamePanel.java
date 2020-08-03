@@ -121,12 +121,16 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
      System.out.println("Mouse is clicked");
   }
   public void mousePressed(MouseEvent e){
+    System.out.println("Mouse is pressed!");
   }
   public void mouseReleased(MouseEvent e){
+    System.out.println("Mouse is released!");
   }
   public void mouseEntered(MouseEvent e){
+    System.out.println("Mouse entered!");
   }
   public void mouseExited(MouseEvent e){
+    System.out.println{"Mouse exited!");
   }
   
 }
