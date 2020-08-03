@@ -34,6 +34,7 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     backButtonGame.setOpaque(true);
     backButtonGame.addActionListener(new GoBackListener(chessGameFrame));
     
+    addMouseListener(this);
     
     this.add(turnChooser);
     this.add(backButtonGame);
@@ -113,24 +114,19 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   }
   public void updateChessBoard(Graphics g){
   }
-  
   //Mouse Listener methods
   public void mouseClicked(MouseEvent e){
-    int x = e.getX();
-    int y = e.getY();
-    System.out.println("Mouse is clicked!");
+     int x=e.getX();
+     int y=e.getY();
+     System.out.println("Mouse is clicked");
   }
   public void mousePressed(MouseEvent e){
-    System.out.println("Mouse is pressed!");
   }
   public void mouseReleased(MouseEvent e){
-    System.out.println("Mouse is released!");
   }
   public void mouseEntered(MouseEvent e){
-    System.out.println("Mouse entered!");
   }
   public void mouseExited(MouseEvent e){
-    System.out.println("Mouse exited!");
   }
   
 }
