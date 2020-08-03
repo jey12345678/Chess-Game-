@@ -1,0 +1,49 @@
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Graphics;
+public class ChessGamePanel extends JPanel implements ChessGameConstants{
+  int x = 0;
+  int y = 0;
+  Dimension dimension =  new Dimension(50,50);
+  boolean colourDecider = false;
+  Tile [][] chessBoard = new Tile [8][8];
+  public ChessGamePanel(){
+    
+    JLabel turnChooser = new JLabel("WHITE PLAYER'S TURN");
+    turnChooser.setFont(turnChooserFont);
+    turnChooser.setBackground(grey);
+    turnChooser.setForeground(Color.WHITE);
+    turnChooser.setBounds(10,450,500,50);
+    turnChooser.setOpaque(true);
+    this.add(turnChooser);
+    this.setVisible(true);
+    this.setBackground(Color.WHITE);
+
+  }
+  protected void paintComponent(Graphics g){
+    super.paintComponent(g);
+    //Draw the chessBoard
+    for(int rowNum = 0; rowNum < 8; rowNum++){
+      for(int columnNum = 0; columnNum<8; columnNum++){
+        chessBoard[rowNum][columnNum] = new Tile(0,x,y,dimension,colourDecider);
+        chessBoard[rowNum][columnNum].drawTile(g);
+        if(colourDecider == true && columnNum != 7){
+          colourDecider = false;
+        }
+        else if(colourDecider == false && columnNum != 7){
+          colourDecider = true;
+        }
+        x = x+ 50;
+      }
+      y = y+ 50;
+      x = 0;
+    }
+    x = 0;
+    y = 0;
+  }
+}
+  
