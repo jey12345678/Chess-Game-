@@ -12,16 +12,16 @@ public class Queen extends Rook{
   
   final int QUEEN_WORTH = 9;
   
-  public Queen(int id,int x, int y, Dimension dimension,boolean colourDecider){
-    super(id,x,y,dimension,colourDecider);
+  public Queen(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean sideColour){
+    super(id,x,y,dimension,colourDecider,sideColour);
   }
   @Override
   public void draw(Graphics g){
-    if(colourDecider == true){
-      g.drawImage(blackQueen,x,y,50,50,null,null);
+    if(sideColour == true){
+      g.drawImage(blackQueen,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
-    else if(colourDecider == false){
-      g.drawImage(whiteQueen,x,y,50,50,null,null);
+    else if(sideColour == false){
+      g.drawImage(whiteQueen,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }
 }

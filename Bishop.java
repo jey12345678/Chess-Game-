@@ -12,16 +12,16 @@ public class Bishop extends Pawn{
   
   final int BISHOP_WORTH = 3;
   
-  public Bishop(int id,int x, int y, Dimension dimension,boolean colourDecider){
-    super(id,x,y,dimension,colourDecider);
+  public Bishop(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean sideColour){
+    super(id,x,y,dimension,colourDecider,sideColour);
   }
   @Override
   public void draw(Graphics g){
-    if(colourDecider == true){
-      g.drawImage(blackBishop,x,y,50,50,null,null);
+    if(sideColour == true){
+      g.drawImage(blackBishop,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
-    else if(colourDecider == false){
-      g.drawImage(whiteBishop,x,y,50,50,null,null);
+    else if(sideColour == false){
+      g.drawImage(whiteBishop,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }
 }

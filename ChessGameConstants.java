@@ -86,6 +86,7 @@ public interface ChessGameConstants {
     Color grey = new Color(176, 175, 169);
     Color darkBrown = new Color(84, 52, 18);
     Color lightBrown = new Color(255, 195, 130);
+    Color aquaBlue = new Color(127,225,240);
     
     //Constants for KO button
     static final int KO_BUTTON_X_LOCATION = 250;
