@@ -12,8 +12,8 @@ public class King extends Pawn{
   
   final int KING_WORTH = 0;
   
-  public King(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,sideColour);
+  public King(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
+    super(id,x,y,dimension,colourDecider,option,sideColour);
   }
   @Override
   public void draw(Graphics g){

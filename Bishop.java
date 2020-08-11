@@ -12,8 +12,8 @@ public class Bishop extends Pawn{
   
   final int BISHOP_WORTH = 3;
   
-  public Bishop(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,sideColour);
+  public Bishop(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
+    super(id,x,y,dimension,colourDecider,option,sideColour);
   }
   @Override
   public void draw(Graphics g){
