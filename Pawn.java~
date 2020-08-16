@@ -8,37 +8,33 @@ public class Pawn extends Tile implements ChessGameConstants{
   
   Image blackPawn = new ImageIcon("blackPawn2.png").getImage();
   Image whitePawn = new ImageIcon("whitePawn2.png").getImage();
-  boolean sideColour;
+  boolean sideColour,selected;
   
   final int PAWN_WORTH = 1;
   
-  public Pawn(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,option);
+  public Pawn(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean selected,boolean sideColour,int rowNum,int columnNum){
+    super(id,x,y,dimension,colourDecider,option,rowNum,columnNum);
     this.sideColour = sideColour;
+    this.selected = selected;
   }
   @Override
   public void draw(Graphics g){
-    if(sideColour == true){
+    super.draw(g);
+    if(sideColour == true && (this.id == 1 || this.id == -1)){
       g.drawImage(blackPawn,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
-    else if(sideColour == false){
+    else if(sideColour == false  && (this.id == 1 || this.id == -1)){
       g.drawImage(whitePawn,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }
-  public boolean checkBounds(int xMouse,int yMouse){
-    System.out.println("X: "+ this.x);
-    System.out.println("Y: "+ this.y);
-    
-    if((xMouse >= this.x && xMouse < (this.x + dimension.getWidth())) && (yMouse>= this.y && yMouse < (this.y+ dimension.getHeight()))){
-      return true;
-    }
-    return false;
-  }
+
   public boolean lightUp(Graphics g, boolean checker){
     if(checker == true){
       g.setColor(aquaBlue);
+      System.out.println("YOOO!");
       g.fillRect(x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()));
       draw(g);
+      
       return true;
     }
     else{
@@ -56,6 +52,17 @@ public class Pawn extends Tile implements ChessGameConstants{
     }
     return false;
   }
-      
-
+  public void movePawn(Tile tile,Tile [][] chessBoard,Graphics g){
+    //Reset the chessBoard
+    chessBoard[tile.rowNum][tile.columnNum] = this;
+    chessBoard[this.rowNum][this.columnNum] = new Tile(0,this.x,this.y,this.dimension,this.colourDecider,this.option,this.rowNum,this.columnNum);
+    
+    chessBoard[this.rowNum][this.columnNum].draw(g);
+    this.x = tile.x;
+    this.y = tile.y;
+    this.rowNum = tile.rowNum;
+    this.columnNum = tile.columnNum;
+    this.colourDecider = tile.colourDecider;
+    ((Pawn)chessBoard[tile.rowNum][tile.columnNum]).draw(g);
+  }
 }

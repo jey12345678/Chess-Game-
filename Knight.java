@@ -11,11 +11,12 @@ public class Knight extends Pawn{
   
   final int KNIGHT_WORTH = 3;
   
-  public Knight(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,option,sideColour);
+  public Knight(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean selected,boolean sideColour,int rowNum,int columnNum){
+    super(id,x,y,dimension,colourDecider,option,selected,sideColour,rowNum,columnNum);
   }
   @Override
   public void draw(Graphics g){
+    super.draw(g);
     if(sideColour == true){
       g.drawImage(blackKnight,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }

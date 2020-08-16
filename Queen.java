@@ -12,11 +12,12 @@ public class Queen extends Rook{
   
   final int QUEEN_WORTH = 9;
   
-  public Queen(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,option,sideColour);
+  public Queen(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean selected,boolean sideColour,int rowNum,int columnNum){
+    super(id,x,y,dimension,colourDecider,option,selected,sideColour,rowNum,columnNum);
   }
   @Override
   public void draw(Graphics g){
+    super.draw(g);
     if(sideColour == true){
       g.drawImage(blackQueen,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }

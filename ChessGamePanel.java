@@ -20,7 +20,10 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   Tile [] blackPieces = new Tile[16];
   Tile [] fallenWhitePieces = new Tile[16];
   Tile [] fallenBlackPieces = new Tile[16];
-  Pawn pieceChosen;
+  Pawn pieceChosen = new Pawn(2,x,y,dimension,false,false,false,false,0,0);
+  int counter = 0;
+  int mouseX,mouseY;
+  int clickNum = 0;
   
   public ChessGamePanel(JFrame chessGameFrame){
     
@@ -46,56 +49,54 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     this.setVisible(true);
     this.setFocusable(true);
     this.setBackground(Color.WHITE);
-  }
-  protected void paintComponent(Graphics g){
-    super.paintComponent(g);
-    int counter = 0;
+    
+    Graphics g = getGraphics();
     //Draw the chessBoard and set up the pieces.
     //Negative ids are for white pawns, and positive ids are for black pawns.
     for(int rowNum = 0; rowNum < 8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
-        chessBoard[rowNum][columnNum] = new Tile(0,x,y,dimension,colourDecider,false);
-        chessBoard[rowNum][columnNum].draw(g);
+        chessBoard[rowNum][columnNum] = new Tile(0,x,y,dimension,colourDecider,false,rowNum,columnNum);
+        //chessBoard[rowNum][columnNum].draw(g);
         //Draw all of the black pieces other than pawns.
         if(rowNum ==  0 && (columnNum == 0 || columnNum == 7)){
-          chessBoard[rowNum][columnNum] = new Rook(2,x,y,dimension,colourDecider,false,false,true);
-          chessBoard[rowNum][columnNum].draw(g);
+          chessBoard[rowNum][columnNum] = new Rook(2,x,y,dimension,colourDecider,false,false,true,rowNum,columnNum);
+          //chessBoard[rowNum][columnNum].draw(g);
         }
         else if(rowNum == 0 &&(columnNum == 1 || columnNum == 6)){
-          chessBoard[rowNum][columnNum] = new Knight(3,x,y,dimension,colourDecider,false,false,true);
+          chessBoard[rowNum][columnNum] = new Knight(3,x,y,dimension,colourDecider,false,false,true,rowNum,columnNum);
         }
         else if(rowNum == 0 && (columnNum == 2 || columnNum ==5)){
-          chessBoard[rowNum][columnNum] = new Bishop(4,x,y,dimension,colourDecider,false,false,true);
+          chessBoard[rowNum][columnNum] = new Bishop(4,x,y,dimension,colourDecider,false,false,true,rowNum,columnNum);
         }
         else if(rowNum == 0 && columnNum == 3){
-          chessBoard[rowNum][columnNum] = new Queen(5,x,y,dimension,colourDecider,false,false,true);
+          chessBoard[rowNum][columnNum] = new Queen(5,x,y,dimension,colourDecider,false,false,true,rowNum,columnNum);
         }
         else if(rowNum == 0 && columnNum == 4){
-          chessBoard[rowNum][columnNum] = new King(6,x,y,dimension,colourDecider,false,false,true);
+          chessBoard[rowNum][columnNum] = new King(6,x,y,dimension,colourDecider,false,false,true,rowNum,columnNum);
         }
         //Draw all of the white pieces other than the pawns.
         else if(rowNum == 7 && columnNum == 3){
-          chessBoard[rowNum][columnNum] = new Queen(-5,x,y,dimension,colourDecider,false,false,false);
+          chessBoard[rowNum][columnNum] = new Queen(-5,x,y,dimension,colourDecider,false,false,false,rowNum,columnNum);
         }
         else if(rowNum == 7 && columnNum ==  4){
-          chessBoard[rowNum][columnNum] = new King(-6,x,y,dimension,colourDecider,false,false,false);
+          chessBoard[rowNum][columnNum] = new King(-6,x,y,dimension,colourDecider,false,false,false,rowNum,columnNum);
         }
         else if(rowNum == 7 && (columnNum ==  0 || columnNum == 7)){
-          chessBoard[rowNum][columnNum] = new Rook(-2,x,y,dimension,colourDecider,false,false,false);
+          chessBoard[rowNum][columnNum] = new Rook(-2,x,y,dimension,colourDecider,false,false,false,rowNum,columnNum);
         }
         else if(rowNum == 7 &&(columnNum == 1 || columnNum == 6)){
-          chessBoard[rowNum][columnNum] = new Knight(-3,x,y,dimension,colourDecider,false,false,false);
+          chessBoard[rowNum][columnNum] = new Knight(-3,x,y,dimension,colourDecider,false,false,false,rowNum,columnNum);
         }
         else if(rowNum == 7 &&(columnNum == 2 || columnNum ==5)){
-          chessBoard[rowNum][columnNum] = new Bishop(-4,x,y,dimension,colourDecider,false,false,false);
+          chessBoard[rowNum][columnNum] = new Bishop(-4,x,y,dimension,colourDecider,false,false,false,rowNum,columnNum);
         }
         //Draw all of the black pawns
         else if(rowNum == 1){
-          chessBoard[rowNum][columnNum] = new Pawn(1,x,y,dimension,colourDecider,false,false,true);
+          chessBoard[rowNum][columnNum] = new Pawn(1,x,y,dimension,colourDecider,false,false,true,rowNum,columnNum);
         }
         //Draw all of the white pawns
         else if(rowNum == 6){
-          chessBoard[rowNum][columnNum] = new Pawn(-1,x,y,dimension,colourDecider,false,false,false);
+          chessBoard[rowNum][columnNum] = new Pawn(-1,x,y,dimension,colourDecider,false,false,false,rowNum,columnNum);
         }
         
         if(rowNum == 6 || rowNum == 7){
@@ -117,29 +118,36 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
           colourDecider = true;
         }
         x = x+ 50;
-        chessBoard[rowNum][columnNum].draw(g);
+        //chessBoard[rowNum][columnNum].draw(g);
       }
       y = y+ 50;
       x = 0;
     }
-
+    
     //Reset the x and y coordinates
     x = 0;
     y = 0;
   }
+  protected void paintComponent(Graphics g){
+    super.paintComponent(g);
+    for(int rowNum = 0; rowNum < 8; rowNum++){
+      for(int columnNum = 0; columnNum<8; columnNum++){
+        chessBoard[rowNum][columnNum].draw(g);
+      }
+    }
+
+  }
   public void updateChessBoard(Graphics g){
   }
-  public void showOptions(Graphics g,Pawn piece){
+  public void showOptions(Graphics g){
     boolean optionChosen = false;
     
     for(int rowNum = 0; rowNum < 8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
         g.setColor(Color.RED);
-        if(chessBoard[rowNum][columnNum].equals(piece)){
+        if(chessBoard[rowNum][columnNum] instanceof Pawn && ((Pawn)chessBoard[rowNum][columnNum]).selected == true){
           int xPiece = chessBoard[rowNum][columnNum].x;
           int yPiece = chessBoard[rowNum][columnNum].y;
-          ((Pawn)chessBoard[rowNum][columnNum]).selected = true;
-          System.out.println("HIII");
           if((rowNum -1) >=0 &&(chessBoard[rowNum - 1][columnNum].id == 0 || ((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum]))){
             g.fillOval(xPiece,yPiece-50,20,20);
             chessBoard[rowNum-1][columnNum].option = true;
@@ -170,21 +178,23 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     for(int rowNum = 0; rowNum <8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
         if(chessBoard[rowNum][columnNum].option == true && chessBoard[rowNum][columnNum] instanceof Pawn){
-          ((Pawn)chessBoard[rowNum][columnNum]).draw(g);
           chessBoard[rowNum][columnNum].option = false;
+          ((Pawn)chessBoard[rowNum][columnNum]).draw(g);
+          
         }
         else if(chessBoard[rowNum][columnNum].option == true){
-          chessBoard[rowNum][columnNum].draw(g);
           chessBoard[rowNum][columnNum].option =  false;
+          chessBoard[rowNum][columnNum].draw(g);
+          
         }
       }
     }
   }
-  public boolean optionPressed(int mouseX,int mouseY,Pawn piece){
+  public boolean optionPressed(int mouseX,int mouseY,Pawn piece,Graphics g){
     for(int rowNum = 0; rowNum<8; rowNum++){
       for(int columnNum =0; columnNum<8; columnNum++){
         if(chessBoard[rowNum][columnNum].checkBounds(mouseX,mouseY) == true && chessBoard[rowNum][columnNum].option == true){
-          piece.movePawn(chessBoard[rowNum][columnNum],chessBoard,rowNum,columnNum);
+          piece.movePawn(chessBoard[rowNum][columnNum],chessBoard,g);
         }
       }
     }
@@ -197,25 +207,35 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   
   public void mousePressed(MouseEvent e){
     System.out.println("Mouse is pressed!");
-    int mouseX=e.getX();
-    int mouseY=e.getY();
+    mouseX=e.getX();
+    mouseY=e.getY();
     Graphics g = getGraphics();
-    
+  
+    if(pieceChosen.selected == true){
+      System.out.println("HELLO!");
+      optionPressed(mouseX,mouseY,pieceChosen,g);
+      clickNum = 0;
+    }
 
     //if its the white player's turn
     if(playerTurn == false){
-      if(pieceChosen.selected == true){
-        optionPressed(mouseX,mouseY,pieceChosen);
-      }
       for(int i = 0; i < 16; i++){
         boundsChecker = whitePieces[i].checkBounds(mouseX,mouseY);
-        ((Pawn)whitePieces[i]).lightUp(g,boundsChecker);
-        if(((Pawn)whitePieces[i]).lightUp(g,boundsChecker) == true){
-          pieceChosen = (Pawn)whitePieces[i];
+        if(boundsChecker == true){
           if(checkOptions() == true){
             resetOptions(g);
           }
-          showOptions(g,pieceChosen);
+          if(pieceChosen.selected == true){
+            pieceChosen.selected = false;
+            ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).selected = false;
+            chessBoard[pieceChosen.rowNum][pieceChosen.columnNum].draw(g);
+            
+          }
+          ((Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum]).selected = true;
+          pieceChosen = (Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum];
+          ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).draw(g);
+          showOptions(g);
+          clickNum++;
         }
       }
     }
@@ -224,6 +244,7 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   }
   public void mouseEntered(MouseEvent e){
     System.out.println("Mouse entered!");
+
   }
   public void mouseExited(MouseEvent e){
     System.out.println("Mouse exited!");

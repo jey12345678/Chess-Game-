@@ -11,8 +11,8 @@ public class Rook extends Pawn{
   
   final int ROOK_WORTH = 5;
   
-  public Rook(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,sideColour);
+  public Rook(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
+    super(id,x,y,dimension,colourDecider,option,sideColour);
   }
   @Override
   public void draw(Graphics g){

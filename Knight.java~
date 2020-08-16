@@ -11,8 +11,8 @@ public class Knight extends Pawn{
   
   final int KNIGHT_WORTH = 3;
   
-  public Knight(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,sideColour);
+  public Knight(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
+    super(id,x,y,dimension,colourDecider,option,sideColour);
   }
   @Override
   public void draw(Graphics g){
