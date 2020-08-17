@@ -23,6 +23,7 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   Pawn pieceChosen = new Pawn(2,x,y,dimension,false,false,false,false,0,0);
   int counter = 0;
   int mouseX,mouseY;
+  int clickNum = 0;
   
   public ChessGamePanel(JFrame chessGameFrame){
     
@@ -134,26 +135,19 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
         chessBoard[rowNum][columnNum].draw(g);
       }
     }
-    for(int i = 0; i < 16; i++){
-      boundsChecker = whitePieces[i].checkBounds(mouseX,mouseY);
-      ((Pawn)whitePieces[i]).lightUp(g,boundsChecker);
-    }
 
   }
   public void updateChessBoard(Graphics g){
   }
-  public void showOptions(Graphics g,Pawn piece){
+  public void showOptions(Graphics g){
     boolean optionChosen = false;
     
     for(int rowNum = 0; rowNum < 8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
         g.setColor(Color.RED);
-        if(chessBoard[rowNum][columnNum].equals(piece)){
+        if(chessBoard[rowNum][columnNum] instanceof Pawn && ((Pawn)chessBoard[rowNum][columnNum]).selected == true){
           int xPiece = chessBoard[rowNum][columnNum].x;
           int yPiece = chessBoard[rowNum][columnNum].y;
-          ((Pawn)chessBoard[rowNum][columnNum]).selected = true;
-         
-          System.out.println("HIII");
           if((rowNum -1) >=0 &&(chessBoard[rowNum - 1][columnNum].id == 0 || ((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum]))){
             g.fillOval(xPiece,yPiece-50,20,20);
             chessBoard[rowNum-1][columnNum].option = true;
@@ -184,12 +178,14 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     for(int rowNum = 0; rowNum <8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
         if(chessBoard[rowNum][columnNum].option == true && chessBoard[rowNum][columnNum] instanceof Pawn){
-          ((Pawn)chessBoard[rowNum][columnNum]).draw(g);
           chessBoard[rowNum][columnNum].option = false;
+          ((Pawn)chessBoard[rowNum][columnNum]).draw(g);
+          
         }
         else if(chessBoard[rowNum][columnNum].option == true){
-          chessBoard[rowNum][columnNum].draw(g);
           chessBoard[rowNum][columnNum].option =  false;
+          chessBoard[rowNum][columnNum].draw(g);
+          
         }
       }
     }
@@ -198,11 +194,13 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     for(int rowNum = 0; rowNum<8; rowNum++){
       for(int columnNum =0; columnNum<8; columnNum++){
         if(chessBoard[rowNum][columnNum].checkBounds(mouseX,mouseY) == true && chessBoard[rowNum][columnNum].option == true){
-          
           piece.movePawn(chessBoard[rowNum][columnNum],chessBoard,g);
         }
       }
     }
+    ((Pawn)chessBoard[piece.rowNum][piece.columnNum]).selected = false;
+    ((Pawn)chessBoard[piece.rowNum][piece.columnNum]).draw(g);
+    
     return false;
   }
   //Mouse Listener methods
@@ -215,23 +213,32 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     mouseX=e.getX();
     mouseY=e.getY();
     Graphics g = getGraphics();
-    
+  
     if(pieceChosen.selected == true){
       System.out.println("HELLO!");
       optionPressed(mouseX,mouseY,pieceChosen,g);
+      clickNum = 0;
     }
 
     //if its the white player's turn
     if(playerTurn == false){
       for(int i = 0; i < 16; i++){
         boundsChecker = whitePieces[i].checkBounds(mouseX,mouseY);
-        ((Pawn)whitePieces[i]).lightUp(g,boundsChecker);
-        if(((Pawn)whitePieces[i]).lightUp(g,boundsChecker) == true){
-          pieceChosen = (Pawn)whitePieces[i];
+        if(boundsChecker == true){
           if(checkOptions() == true){
             resetOptions(g);
           }
-          showOptions(g,pieceChosen);
+          if(pieceChosen.selected == true){
+            pieceChosen.selected = false;
+            ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).selected = false;
+            chessBoard[pieceChosen.rowNum][pieceChosen.columnNum].draw(g);
+            
+          }
+          ((Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum]).selected = true;
+          pieceChosen = (Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum];
+          ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).draw(g);
+          showOptions(g);
+          clickNum++;
         }
       }
     }

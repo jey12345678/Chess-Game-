@@ -50,7 +50,7 @@ public class Pawn extends Tile implements ChessGameConstants{
     this.rowNum = tile.rowNum;
     this.columnNum = tile.columnNum;
     this.colourDecider = tile.colourDecider;
-   ((Pawn)chessBoard[tile.rowNum][tile.columnNum]).
+   //((Pawn)chessBoard[tile.rowNum][tile.columnNum]).selected = false;
     ((Pawn)chessBoard[tile.rowNum][tile.columnNum]).draw(g);
   }
 }
