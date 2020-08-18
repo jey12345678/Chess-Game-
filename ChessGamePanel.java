@@ -130,12 +130,11 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   }
   protected void paintComponent(Graphics g){
     super.paintComponent(g);
-    for(int rowNum = 0; rowNum < 8; rowNum++){
-      for(int columnNum = 0; columnNum<8; columnNum++){
-        chessBoard[rowNum][columnNum].draw(g);
+      for(int rowNum = 0; rowNum < 8; rowNum++){
+        for(int columnNum = 0; columnNum<8; columnNum++){
+          chessBoard[rowNum][columnNum].draw(g);
+        }
       }
-    }
-
   }
   public void updateChessBoard(Graphics g){
   }
@@ -168,7 +167,6 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
         if(chessBoard[rowNum][columnNum].option == true && chessBoard[rowNum][columnNum] instanceof Pawn){
           chessBoard[rowNum][columnNum].option = false;
           ((Pawn)chessBoard[rowNum][columnNum]).draw(g);
-          
         }
         else if(chessBoard[rowNum][columnNum].option == true){
           chessBoard[rowNum][columnNum].option =  false;
@@ -193,17 +191,33 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   }
   public void showOptionsPawn(Graphics g,int xPiece,int yPiece, int rowNum,int columnNum){
     g.setColor(Color.RED);
-    if((rowNum -1) >=0 &&(chessBoard[rowNum - 1][columnNum].id == 0)){
-      g.fillOval(xPiece,yPiece-50,20,20);
-      chessBoard[rowNum-1][columnNum].option = true;
+    if(playerTurn == false){
+      if((rowNum -1) >=0 &&(chessBoard[rowNum - 1][columnNum].id == 0)){
+        g.fillOval(xPiece,yPiece-50,20,20);
+        chessBoard[rowNum-1][columnNum].option = true;
+      }
+      if((rowNum-1)>= 0 && (columnNum+1)< 8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum+1]))){
+        g.fillOval(xPiece+50,yPiece-50,20,20);
+        chessBoard[rowNum-1][columnNum+1].option = true;
+      }
+      if((rowNum-1)>=0 &&(columnNum-1)>= 0 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum-1]))){
+        g.fillOval(xPiece-50,yPiece-50,20,20);
+        chessBoard[rowNum-1][columnNum-1].option = true;
+      }
     }
-    if((rowNum-1)>= 0 && (columnNum+1)< 8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum+1]))){
-      g.fillOval(xPiece+50,yPiece-50,20,20);
-      chessBoard[rowNum-1][columnNum+1].option = true;
-    }
-    if((rowNum-1)>=0 &&(columnNum-1)>= 0 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum-1]))){
-      g.fillOval(xPiece-50,yPiece-50,20,20);
-      chessBoard[rowNum-1][columnNum-1].option = true;
+    else if(playerTurn == true){
+      if((rowNum+1) < 8 && (chessBoard[rowNum+1][columnNum].id == 0)){
+        g.fillOval(xPiece,yPiece+50,20,20);
+        chessBoard[rowNum+1][columnNum].option = true;
+      }
+      if((rowNum+1)<8 && (columnNum+1)<8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum+1][columnNum+1]))){
+        g.fillOval(xPiece+50,yPiece+50,20,20);
+        chessBoard[rowNum+1][columnNum+1].option = true;
+      }
+      if((rowNum+1)< 8 && (columnNum-1) < 8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum+1][columnNum-1]))){
+        g.fillOval(xPiece+50,yPiece-50,20,20); 
+        chessBoard[rowNum+1][columnNum-1].option = true;
+      }
     }
   }
   public void resetPiecesOnBoard(Graphics g){
@@ -227,14 +241,14 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     mouseX=e.getX();
     mouseY=e.getY();
     Graphics g = getGraphics();
-  
+    
     if(pieceChosen.selected == true){
       System.out.println("HELLO!");
       pieceChosen.selected = false;
       optionPressed(mouseX,mouseY,pieceChosen,g);
       playerTurn = true;
     }
-
+    
     //if its the white player's turn
     if(playerTurn == false){
       for(int i = 0; i < 16; i++){
@@ -260,6 +274,7 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     else if(playerTurn == true){
       //Reset the white players
       resetPiecesOnBoard(g);
+      
     }
       
   }
