@@ -11,15 +11,16 @@ public class Rook extends Pawn{
   
   final int ROOK_WORTH = 5;
   
-  public Rook(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean sideColour){
-    super(id,x,y,dimension,colourDecider,option,sideColour);
+  public Rook(int id,int x, int y, Dimension dimension,boolean colourDecider,boolean option,boolean selected,boolean sideColour,int rowNum,int columnNum){
+    super(id,x,y,dimension,colourDecider,option,selected,sideColour,rowNum,columnNum);
   }
   @Override
   public void draw(Graphics g){
-    if(sideColour == true){
+    super.draw(g);
+    if(sideColour == true  && (this.id == 2 || this.id == -2)){
       g.drawImage(blackRook,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
-    else if(sideColour == false){
+    else if(sideColour == false  && (this.id == 2 || this.id == -2)){
       g.drawImage(whiteRook,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }

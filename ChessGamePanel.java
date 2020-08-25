@@ -23,7 +23,6 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   Pawn pieceChosen = new Pawn(2,x,y,dimension,false,false,false,false,0,0);
   int counter = 0;
   int mouseX,mouseY;
-  int clickNum = 0;
   
   public ChessGamePanel(JFrame chessGameFrame){
     
@@ -136,21 +135,88 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
         }
       }
   }
-  public void updateChessBoard(Graphics g){
+  public int showMaxRowUp(int rowNum,Tile piece,int counter){
+    if(rowNum == -1){
+      return 0;
+    }
+    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == false && chessBoard[rowNum][piece.columnNum].id == 0 && rowNum == 0){
+      return 1;
+    }
+    else if(((Rook)piece).isFriend(chessBoard[rowNum][piece.columnNum]) == true || rowNum == 0){
+      return 0;
+    }
+    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == true || rowNum == 0){
+      return 1;
+    }
+    else{
+      return counter+showMaxRowUp(rowNum-1,piece,counter);
+    } 
   }
+      
   public void showOptions(Graphics g){
     for(int rowNum = 0; rowNum < 8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
-        g.setColor(Color.RED);
-        int xPiece = chessBoard[rowNum][columnNum].x;
-        int yPiece = chessBoard[rowNum][columnNum].y;
-        if(chessBoard[rowNum][columnNum] instanceof Pawn && ((Pawn)chessBoard[rowNum][columnNum]).selected == true){
-          showOptionsPawn(g,xPiece,yPiece,rowNum,columnNum);
+        if(chessBoard[rowNum][columnNum] instanceof Pawn && ((Pawn)chessBoard[rowNum][columnNum]).selected == true && (chessBoard[rowNum][columnNum].id == -1 || chessBoard[rowNum][columnNum].id == 1)){
+          findOptionsPawn(rowNum,columnNum);
+        }
+        else if(chessBoard[rowNum][columnNum] instanceof Rook && ((Rook)chessBoard[rowNum][columnNum]).selected == true){
+          System.out.println("HELLLLLLLLOOOOO!");
+          findOptionsRook(chessBoard[rowNum][columnNum]);
+        }
+        lightRedSpots(g);
+      }
+    }
+  }
+  public void lightRedSpots(Graphics g){
+    g.setColor(Color.RED);
+    for(int rowNum = 0; rowNum < 8; rowNum++){
+      for(int columnNum = 0; columnNum<8; columnNum++){
+        if(chessBoard[rowNum][columnNum].option == true){
+          g.fillOval(chessBoard[rowNum][columnNum].x,chessBoard[rowNum][columnNum].y,20,20);
         }
       }
     }
-
   }
+  public int  showMaxRowDown(int rowNum,Tile piece, int counter){
+    if(rowNum == 8){
+      return 0;
+    }
+    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == false && chessBoard[rowNum][piece.columnNum].id == 0 && rowNum == 7){
+      return 1;
+    }
+    else if(((Rook)piece).isFriend(chessBoard[rowNum][piece.columnNum]) == true){
+      return 0;
+    }
+    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == true){
+      return 1;
+    }
+    else{
+      return counter+showMaxRowDown(rowNum+1,piece,counter);
+    }
+  }
+  public boolean findOptionsRook(Tile piece){
+    int counter = 1;
+    int rowDifference = showMaxRowUp(piece.rowNum-1,piece,counter);
+    int row = piece.rowNum - rowDifference;
+    System.out.println("ROW UPWARDS IS "+row);
+    int currentRowNum = piece.rowNum;
+    while(currentRowNum != row){
+      currentRowNum --;
+      chessBoard[currentRowNum][piece.columnNum].option = true;
+    }
+    counter = 1;
+    rowDifference = showMaxRowDown(piece.rowNum+1,piece,counter);
+    System.out.println("Row Difference: "+ rowDifference);
+    row  = piece.rowNum + rowDifference;
+    System.out.println("ROW DOWNWARDS IS "+row);
+    currentRowNum = piece.rowNum;
+    while(currentRowNum != row){
+      currentRowNum++;
+      chessBoard[currentRowNum][piece.columnNum].option = true;
+    }
+    return true;
+  }
+  
   public boolean checkOptions(){
     for(int rowNum = 0; rowNum <8; rowNum++){
       for(int columnNum = 0; columnNum <8; columnNum++){
@@ -171,16 +237,21 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
         else if(chessBoard[rowNum][columnNum].option == true){
           chessBoard[rowNum][columnNum].option =  false;
           chessBoard[rowNum][columnNum].draw(g);
-          
         }
       }
     }
   }
+    
   public boolean optionPressed(int mouseX,int mouseY,Pawn piece,Graphics g){
     for(int rowNum = 0; rowNum<8; rowNum++){
       for(int columnNum =0; columnNum<8; columnNum++){
         if(chessBoard[rowNum][columnNum].checkBounds(mouseX,mouseY) == true && chessBoard[rowNum][columnNum].option == true){
-          piece.movePawn(chessBoard[rowNum][columnNum],chessBoard,g);
+          if(chessBoard[rowNum][columnNum] instanceof Pawn && piece.isEnemy(chessBoard[rowNum][columnNum])){
+            removeFromPlayerPieces(chessBoard[rowNum][columnNum]);
+            chessBoard[rowNum][columnNum] = new Tile(0,chessBoard[rowNum][columnNum].x,chessBoard[rowNum][columnNum].y,chessBoard[rowNum][columnNum].dimension,chessBoard[rowNum][columnNum].colourDecider,chessBoard[rowNum][columnNum].option,chessBoard[rowNum][columnNum].rowNum,chessBoard[rowNum][columnNum].columnNum);
+          }
+          piece.move(chessBoard[rowNum][columnNum],chessBoard,g);
+          return true;
         }
       }
     }
@@ -189,33 +260,47 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     
     return false;
   }
-  public void showOptionsPawn(Graphics g,int xPiece,int yPiece, int rowNum,int columnNum){
-    g.setColor(Color.RED);
+  public boolean removeFromPlayerPieces(Tile piece){
+    System.out.println("I'M HERE!");
+    for(int counter = 0; counter< 16;counter++){
+      if(whitePieces[counter] != null && playerTurn == true && piece.equals(whitePieces[counter])){
+        whitePieces[counter] = null;
+        return true;
+      }
+      else if(blackPieces[counter] != null && playerTurn == false && piece.equals(blackPieces[counter])){
+        blackPieces[counter] = null;
+        return true;
+      }
+    }
+    return false;
+  }
+          
+  public void findOptionsPawn(int rowNum,int columnNum){
     if(playerTurn == false){
       if((rowNum -1) >=0 &&(chessBoard[rowNum - 1][columnNum].id == 0)){
-        g.fillOval(xPiece,yPiece-50,20,20);
         chessBoard[rowNum-1][columnNum].option = true;
+        if((rowNum -2)>= 0 && (chessBoard[rowNum-2][columnNum].id == 0) && rowNum == 6){
+          chessBoard[rowNum-2][columnNum].option = true;
+        }
       }
       if((rowNum-1)>= 0 && (columnNum+1)< 8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum+1]))){
-        g.fillOval(xPiece+50,yPiece-50,20,20);
         chessBoard[rowNum-1][columnNum+1].option = true;
       }
       if((rowNum-1)>=0 &&(columnNum-1)>= 0 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum-1][columnNum-1]))){
-        g.fillOval(xPiece-50,yPiece-50,20,20);
         chessBoard[rowNum-1][columnNum-1].option = true;
       }
     }
     else if(playerTurn == true){
       if((rowNum+1) < 8 && (chessBoard[rowNum+1][columnNum].id == 0)){
-        g.fillOval(xPiece,yPiece+50,20,20);
         chessBoard[rowNum+1][columnNum].option = true;
+        if((rowNum +2) < 8 && (chessBoard[rowNum+2][columnNum].id == 0) && rowNum == 1){
+          chessBoard[rowNum+2][columnNum].option = true;
+        }
       }
       if((rowNum+1)<8 && (columnNum+1)<8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum+1][columnNum+1]))){
-        g.fillOval(xPiece+50,yPiece+50,20,20);
         chessBoard[rowNum+1][columnNum+1].option = true;
       }
-      if((rowNum+1)< 8 && (columnNum-1) < 8 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum+1][columnNum-1]))){
-        g.fillOval(xPiece+50,yPiece-50,20,20); 
+      if((rowNum+1)< 8 && (columnNum-1) >= 0 && (((Pawn)chessBoard[rowNum][columnNum]).isEnemy(chessBoard[rowNum+1][columnNum-1]))){
         chessBoard[rowNum+1][columnNum-1].option = true;
       }
     }
@@ -235,54 +320,77 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
   public void mouseClicked(MouseEvent e){
      System.out.println("Mouse is clicked");
   }
-  
   public void mousePressed(MouseEvent e){
     System.out.println("Mouse is pressed!");
     mouseX=e.getX();
     mouseY=e.getY();
     Graphics g = getGraphics();
+    boolean optionPressedChosen;
     
     if(pieceChosen.selected == true){
       System.out.println("HELLO!");
       pieceChosen.selected = false;
-      optionPressed(mouseX,mouseY,pieceChosen,g);
-      playerTurn = true;
+      optionPressedChosen = optionPressed(mouseX,mouseY,pieceChosen,g);
+      if(optionPressedChosen == true && playerTurn == false){
+        playerTurn = true;
+        resetPiecesOnBoard(g);
+      }
+      else if(optionPressedChosen == true && playerTurn == true){
+        playerTurn = false;
+        resetPiecesOnBoard(g);
+      }
+        
     }
     
     //if its the white player's turn
     if(playerTurn == false){
       for(int i = 0; i < 16; i++){
-        boundsChecker = whitePieces[i].checkBounds(mouseX,mouseY);
-        if(boundsChecker == true){
-          if(checkOptions() == true){
-            resetOptions(g);
+        if(whitePieces[i] != null){
+          boundsChecker = whitePieces[i].checkBounds(mouseX,mouseY);
+          if(boundsChecker == true){
+            if(checkOptions() == true){
+              resetOptions(g);
+            }
+            if(pieceChosen.selected == true){
+              pieceChosen.selected = false;
+              ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).selected = false;
+              chessBoard[pieceChosen.rowNum][pieceChosen.columnNum].draw(g);
+            }
+            ((Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum]).selected = true;
+            pieceChosen = (Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum];
+            ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).draw(g);
+            showOptions(g);
           }
-          if(pieceChosen.selected == true){
-            pieceChosen.selected = false;
-            ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).selected = false;
-            chessBoard[pieceChosen.rowNum][pieceChosen.columnNum].draw(g);
-            
-          }
-          ((Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum]).selected = true;
-          pieceChosen = (Pawn)chessBoard[whitePieces[i].rowNum][whitePieces[i].columnNum];
-          ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).draw(g);
-          showOptions(g);
-          clickNum++;
         }
       }
     }
     else if(playerTurn == true){
-      //Reset the white players
-      resetPiecesOnBoard(g);
-      
+      for(int i = 0; i < 16; i++){
+        if(blackPieces[i] != null){
+          boundsChecker = blackPieces[i].checkBounds(mouseX,mouseY);
+          if(boundsChecker == true){
+            if(checkOptions() == true){
+              resetOptions(g);
+            }
+            if(pieceChosen.selected == true){
+              pieceChosen.selected = false;
+              ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).selected = false;
+              chessBoard[pieceChosen.rowNum][pieceChosen.columnNum].draw(g);
+              
+            }
+            ((Pawn)chessBoard[blackPieces[i].rowNum][blackPieces[i].columnNum]).selected = true;
+            pieceChosen = (Pawn)chessBoard[blackPieces[i].rowNum][blackPieces[i].columnNum];
+            ((Pawn)chessBoard[pieceChosen.rowNum][pieceChosen.columnNum]).draw(g);
+            showOptions(g);
+          }
+        }
+      }
     }
-      
   }
   public void mouseReleased(MouseEvent e){
   }
   public void mouseEntered(MouseEvent e){
     System.out.println("Mouse entered!");
-
   }
   public void mouseExited(MouseEvent e){
     System.out.println("Mouse exited!");

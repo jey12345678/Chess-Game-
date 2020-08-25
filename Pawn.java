@@ -40,7 +40,18 @@ public class Pawn extends Tile implements ChessGameConstants{
     }
     return false;
   }
-  public void movePawn(Tile tile,Tile [][] chessBoard,Graphics g){
+  public boolean isFriend(Tile piece){
+    if(piece.id > 0 && this.id > 0){
+      return true;
+    }
+    else if(piece.id < 0 && this.id < 0){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  public void move(Tile tile,Tile [][] chessBoard,Graphics g){
     //Reset the chessBoard
     chessBoard[tile.rowNum][tile.columnNum] = this;
     chessBoard[this.rowNum][this.columnNum] = new Tile(0,this.x,this.y,this.dimension,this.colourDecider,this.option,this.rowNum,this.columnNum);
@@ -50,7 +61,6 @@ public class Pawn extends Tile implements ChessGameConstants{
     this.rowNum = tile.rowNum;
     this.columnNum = tile.columnNum;
     this.colourDecider = tile.colourDecider;
-   //((Pawn)chessBoard[tile.rowNum][tile.columnNum]).selected = false;
-    ((Pawn)chessBoard[tile.rowNum][tile.columnNum]).draw(g);
+    chessBoard[tile.rowNum][tile.columnNum].draw(g);
   }
 }
