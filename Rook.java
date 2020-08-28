@@ -24,5 +24,72 @@ public class Rook extends Pawn{
       g.drawImage(whiteRook,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }
-    
+  public int  showMaxRowDown(int rowNum,int counter,Tile [][] chessBoard){
+    if(rowNum == 8){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[rowNum][this.columnNum]) == false && chessBoard[rowNum][this.columnNum].id == 0 && rowNum == 7){
+      return 1;
+    }
+    else if(this.isFriend(chessBoard[rowNum][this.columnNum]) == true){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[rowNum][this.columnNum]) == true){
+      return 1;
+    }
+    else{
+      return counter+showMaxRowDown(rowNum+1,counter,chessBoard);
+    }
+  }
+  public int showMaxRowUp(int rowNum,int counter,Tile [][] chessBoard){
+    if(rowNum == -1){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[rowNum][this.columnNum]) == false && chessBoard[rowNum][this.columnNum].id == 0 && rowNum == 0){
+      return 1;
+    }
+    else if(this.isFriend(chessBoard[rowNum][this.columnNum]) == true){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[rowNum][this.columnNum]) == true){
+      return 1;
+    }
+    else{
+      return counter+showMaxRowUp(rowNum-1,counter,chessBoard);
+    } 
+  }
+  public int showMaxColumnRight(int columnNum,int counter,Tile [][] chessBoard){
+    if(columnNum == 8){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[this.rowNum][columnNum]) == false && chessBoard[this.rowNum][columnNum].id == 0 && columnNum == 7){
+      return 1;
+    }
+    else if(this.isFriend(chessBoard[this.rowNum][columnNum]) == true){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[this.rowNum][columnNum]) == true){
+      return 1;
+    }
+    else{
+      return counter+showMaxColumnRight(columnNum+1,counter,chessBoard);
+    }
+  }
+  public int showMaxColumnLeft(int columnNum,int counter,Tile [][] chessBoard){
+    if(columnNum == -1){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[this.rowNum][columnNum]) == false && chessBoard[this.rowNum][columnNum].id == 0 && columnNum == 0){
+      return 1;
+    }
+    else if(this.isFriend(chessBoard[this.rowNum][columnNum]) == true){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[this.rowNum][columnNum]) == true){
+      return 1;
+    }
+    else{
+      return counter+showMaxColumnLeft(columnNum-1,counter,chessBoard);
+    }
+  }
 }

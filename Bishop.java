@@ -25,5 +25,23 @@ public class Bishop extends Pawn{
       g.drawImage(whiteBishop,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }
+  public int showMaxDiagonalUp(int columnNum,int counter,Tile [][] chessBoard){
+        if(columnNum == -1){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[this.rowNum][columnNum]) == false && chessBoard[this.rowNum][columnNum].id == 0 && columnNum == 0){
+      return 1;
+    }
+    else if(this.isFriend(chessBoard[this.rowNum][columnNum]) == true){
+      return 0;
+    }
+    else if(this.isEnemy(chessBoard[this.rowNum][columnNum]) == true){
+      return 1;
+    }
+    else{
+      return counter+showMaxColumnLeft(columnNum-1,counter,chessBoard);
+    }
+  }
+    
 }
   

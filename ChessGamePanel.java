@@ -135,24 +135,6 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
         }
       }
   }
-  public int showMaxRowUp(int rowNum,Tile piece,int counter){
-    if(rowNum == -1){
-      return 0;
-    }
-    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == false && chessBoard[rowNum][piece.columnNum].id == 0 && rowNum == 0){
-      return 1;
-    }
-    else if(((Rook)piece).isFriend(chessBoard[rowNum][piece.columnNum]) == true || rowNum == 0){
-      return 0;
-    }
-    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == true || rowNum == 0){
-      return 1;
-    }
-    else{
-      return counter+showMaxRowUp(rowNum-1,piece,counter);
-    } 
-  }
-      
   public void showOptions(Graphics g){
     for(int rowNum = 0; rowNum < 8; rowNum++){
       for(int columnNum = 0; columnNum<8; columnNum++){
@@ -160,8 +142,7 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
           findOptionsPawn(rowNum,columnNum);
         }
         else if(chessBoard[rowNum][columnNum] instanceof Rook && ((Rook)chessBoard[rowNum][columnNum]).selected == true){
-          System.out.println("HELLLLLLLLOOOOO!");
-          findOptionsRook(chessBoard[rowNum][columnNum]);
+          findOptionsRook((Rook)chessBoard[rowNum][columnNum]);
         }
         lightRedSpots(g);
       }
@@ -177,42 +158,36 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
       }
     }
   }
-  public int  showMaxRowDown(int rowNum,Tile piece, int counter){
-    if(rowNum == 8){
-      return 0;
-    }
-    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == false && chessBoard[rowNum][piece.columnNum].id == 0 && rowNum == 7){
-      return 1;
-    }
-    else if(((Rook)piece).isFriend(chessBoard[rowNum][piece.columnNum]) == true){
-      return 0;
-    }
-    else if(((Rook)piece).isEnemy(chessBoard[rowNum][piece.columnNum]) == true){
-      return 1;
-    }
-    else{
-      return counter+showMaxRowDown(rowNum+1,piece,counter);
-    }
-  }
-  public boolean findOptionsRook(Tile piece){
+
+  public boolean findOptionsRook(Rook piece){
     int counter = 1;
-    int rowDifference = showMaxRowUp(piece.rowNum-1,piece,counter);
+    int rowDifference = piece.showMaxRowUp(piece.rowNum-1,counter,chessBoard);
     int row = piece.rowNum - rowDifference;
-    System.out.println("ROW UPWARDS IS "+row);
     int currentRowNum = piece.rowNum;
     while(currentRowNum != row){
       currentRowNum --;
       chessBoard[currentRowNum][piece.columnNum].option = true;
     }
-    counter = 1;
-    rowDifference = showMaxRowDown(piece.rowNum+1,piece,counter);
-    System.out.println("Row Difference: "+ rowDifference);
+    rowDifference = piece.showMaxRowDown(piece.rowNum+1,counter,chessBoard);
     row  = piece.rowNum + rowDifference;
-    System.out.println("ROW DOWNWARDS IS "+row);
     currentRowNum = piece.rowNum;
     while(currentRowNum != row){
       currentRowNum++;
       chessBoard[currentRowNum][piece.columnNum].option = true;
+    }
+    int columnDifference = piece.showMaxColumnRight(piece.columnNum+1,counter,chessBoard); 
+    int column = piece.columnNum+columnDifference;
+    int currentColumnNum = piece.columnNum;
+    while(currentColumnNum != column){
+      currentColumnNum++;
+      chessBoard[piece.rowNum][currentColumnNum].option = true;
+    }
+    columnDifference = piece.showMaxColumnLeft(piece.columnNum-1,counter,chessBoard); 
+    column = piece.columnNum-columnDifference;
+    currentColumnNum = piece.columnNum;
+    while(currentColumnNum != column){
+      currentColumnNum--;
+      chessBoard[piece.rowNum][currentColumnNum].option = true;
     }
     return true;
   }
@@ -260,6 +235,7 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     
     return false;
   }
+  
   public boolean removeFromPlayerPieces(Tile piece){
     System.out.println("I'M HERE!");
     for(int counter = 0; counter< 16;counter++){
@@ -274,7 +250,6 @@ public class ChessGamePanel extends JPanel implements ChessGameConstants,MouseLi
     }
     return false;
   }
-          
   public void findOptionsPawn(int rowNum,int columnNum){
     if(playerTurn == false){
       if((rowNum -1) >=0 &&(chessBoard[rowNum - 1][columnNum].id == 0)){

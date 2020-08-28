@@ -24,4 +24,5 @@ public class Rook extends Pawn{
       g.drawImage(whiteRook,x,y,(int)(dimension.getWidth()),(int)(dimension.getHeight()),null,null);
     }
   }
+    
 }
